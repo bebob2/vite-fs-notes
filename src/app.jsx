@@ -1,6 +1,5 @@
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Note from "./components/Note";
 
 const App = () => {
@@ -11,7 +10,7 @@ const App = () => {
   useEffect(() => {
     const getNotes = async () => {
       try {
-        const response = await axios.get("/api/notesw");
+        const response = await axios.get("/api/notes");
         const { data, status } = response;
         console.log("data", data, "status", status);
         if (!data) {
@@ -25,16 +24,21 @@ const App = () => {
     getNotes();
   }, []);
 
-  const addNote = (event) => {
+  const addNote = async (event) => {
     event.preventDefault();
     const noteObject = {
       content: newNote,
       important: Math.random() > 0.5,
       id: notes.length + 1,
     };
+    try {
+      await axios.post("/api/notes", noteObject);
 
-    setNotes(notes.concat(noteObject));
-    setNewNote("");
+      setNotes(notes.concat(noteObject));
+      setNewNote("");
+    } catch (error) {
+      console.log("post error");
+    }
   };
 
   const handleNoteChange = (event) => {
